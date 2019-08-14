@@ -24,7 +24,7 @@ The high level logic is as follows:
 There are three steps in the implementation: Add data dictionary, Add custom VCL, update main VCL.
 
 ### Add Data Dictionary 
-Add a dictionary called 'queueit_config' and the followning Keys:
+Add a dictionary called `queueit_config` and the followning Keys:
 - *CustomerId* - The id of your Queue-it account
 - *EventId* - The id of the queue users will be send to
 - *Queue_Baseurl* - The base URL of the queue, must end with trailing slash / e.g. https://[CUSTOMER_ID].queue-it.net/
@@ -32,7 +32,7 @@ Add a dictionary called 'queueit_config' and the followning Keys:
 - *Website_Host* - OPTIONAL. If the public facing host name is overwritten in Fastly use this to correct
 
 ### Add a new Custom VCL
-Add a new Custom VCL and call it 'Queue-it Connector'. The VCL can be found here: [Queue-it Connector]( https://github.com/queueit/KnownUser.Fastly/blob/master/Queue-it%20Connector.vcl)
+Add a new Custom VCL and call it `Queue-it Connector`. The VCL can be found here: [Queue-it Connector]( https://github.com/queueit/KnownUser.Fastly/blob/master/Queue-it%20Connector.vcl)
 
 ### Update the main VCL
 In the current main VCL:

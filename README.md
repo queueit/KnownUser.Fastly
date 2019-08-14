@@ -25,15 +25,14 @@ There are three steps in the implementation: Add data dictionary, Add custom VCL
 
 ### Add Data Dictionary 
 Add a dictionary called 'queueit_config' and the followning Keys:
-- CustomerId
-- EventId
-- Queue_Baseurl
-- Secrete_key
-- Session_cookie_name
-- Website_Host
+- CustomerId - The id of your Queue-it account
+- EventId - The id of the queue users will be send to
+- Queue_Baseurl - The base URL of the queue, must end with trailing slash / e.g. https://[CUSTOMER_ID].queue-it.net/
+- Secrete_key - The secrete key that is shared between you and Queue-it. It can be found in the Go Queue-it account under Account | Settings | Integration
+- Website_Host - OPTIONAL. If the public facing host name is overwritten in Fastly use this to correct
 
 ### Add a new Custom VCL
-Add a new Custom VCL and call it 'Queue-it Connector'. The VCL can be found here: LINK
+Add a new Custom VCL and call it 'Queue-it Connector'. The VCL can be found here: [Queue-it Connector]( https://github.com/queueit/KnownUser.Fastly/blob/master/Queue-it%20Connector.vcl)
 
 ### Update the main VCL
 In the current main VCL:

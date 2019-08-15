@@ -42,19 +42,65 @@ In the current main VCL:
 include "Queue-it Connector"
 ```
 
-2) insert inside the sub vcl_recv {} before the return(lookup);
+2) insert inside the *sub vcl_recv {}* before the *return(lookup);*
 ```vcl
 call queueit_recv;
 ```
 
-3) insert inside the sub vcl_deliver {} before the return(deliver);
+3) insert inside the *sub vcl_deliver {}* before the *return(deliver);*
 ```vcl
 if (req.http.Queue-IT-Set-Cookie){
   add resp.http.Set-Cookie = req.http.Queue-IT-Set-Cookie;
 }
 ```
 
-4) insert indsite the sub vcl_error {}
+4) insert indsite the *sub vcl_error {}*
 ```vcl
 call queueit_error;
 ```
+
+## Customisation
+The [Queue-it Connector]( https://github.com/queueit/KnownUser.Fastly/blob/master/Queue-it%20Connector.vcl) file needs to be customised a few places to fit the concrete use case.
+- There is a list of Good Bots like googlebot, bingbot etc. that are allowed to bypass the queue. This list should be verified against the concrete use case.
+- There is a list of Dynamic pages. This list is used to ensure that bad actors cannot bypass the queue by spoofing the User Agent string. No good bot should need to access this list of dynamic pages as only non-personalised pages should be indexed.
+- The is a list of URL exceptions that should always be accessable to end-users. This could e.g. be a store locator page. Be careful only to include pages here that can handle large user spikes. 
+
+```vcl
+sub queueit_recv {
+  declare local var.client_status STRING;
+  declare local var.page_type STRING;
+  /* First detect if request is not one of the following client types, 
+   * otherwise we'll assume they're a customer and set the status. */
+  if (req.http.User-Agent ~ "(?i)(ads|google|bing|msn|yandex|baidu|ro|career|face|duckduck|twitter)bot"
+      || req.http.User-Agent ~ "(?i)(baidu|jike|symantec)spider"
+      || req.http.User-Agent ~ "(?i)scanner"
+      || req.http.User-Agent ~ "(?i)(web)crawler"
+      || req.http.User-Agent ~ "(?i)facebookexternalhit")  {
+  set var.client_status = "bypass"; 
+  }
+  /* Second check that the URL isn't dynamic like logon, checkout logic etc. 
+   * could be exploited if customers spoof the UA string. */
+ if (req.url ~ "LogonForm"
+    || req.url ~ "OrderItemDisplay"
+    || req.url ~ "OrderShippingBillingView"
+    || req.url ~ "AjaxLogonForm"
+    || req.url ~ "CheckoutPlaceOrder"
+    || req.url ~ "MyAccount"
+    || req.url ~ "UserRegistrationForm") {
+  set var.page_type = "dynamic"; 
+  }
+  /* Now return request back to main otherwise move to queue. */
+  if (var.client_status == "bypass"
+    && var.page_type != "dynamic") {
+      return;
+    }
+  /* Now check for URL exceptions*/
+  if (req.url ~ "^/stores/locator") {
+    return;
+  }
+  .....
+```  
+
+## Limitations
+The current implementation only support one active queue.
+Trigger & Action configuration in Go Queue-it Self-service platform is not supported

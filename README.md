@@ -26,9 +26,9 @@ There are three steps in the implementation: Add data dictionary, Add custom VCL
 ### Add Data Dictionary 
 Add a dictionary called `queueit_config` and the followning Keys:
 - *CustomerId* - The id of your Queue-it account
-- *EventId* - The id of the queue users will be send to
+- *EventId* - The id of the queue users will be sent to
 - *Queue_Baseurl* - The base URL of the queue, must end with trailing slash / e.g. https://[CUSTOMER_ID].queue-it.net/
-- *Secrete_key* - The secrete key that is shared between you and Queue-it. It can be found in the Go Queue-it account under Account | Settings | Integration
+- *Secret_key* - The secret key that is shared between you and Queue-it
 - *Website_Host* - OPTIONAL. If the public facing host name is overwritten in Fastly use this to correct
 ![Image of Dictionary](https://github.com/queueit/KnownUser.Fastly/blob/master/Dictionary.PNG)
 
@@ -54,16 +54,16 @@ if (req.http.Queue-IT-Set-Cookie){
 }
 ```
 
-4) insert indsite the *sub vcl_error {}*
+4) insert inside the *sub vcl_error {}*
 ```vcl
 call queueit_error;
 ```
 
-## Customisation
-The [Queue-it Connector]( https://github.com/queueit/KnownUser.Fastly/blob/master/Queue-it%20Connector.vcl) file needs to be customised a few places to fit the concrete use case.
+## Customization
+The [Queue-it Connector](https://github.com/queueit/KnownUser.Fastly/blob/master/Queue-it%20Connector.vcl) file needs to be customized a few places to fit the concrete use case.
 - There is a list of Good Bots like googlebot, bingbot etc. that are allowed to bypass the queue. This list should be verified against the concrete use case.
 - There is a list of Dynamic pages. This list is used to ensure that bad actors cannot bypass the queue by spoofing the User Agent string. No good bot should need to access this list of dynamic pages as only non-personalised pages should be indexed.
-- The is a list of URL exceptions that should always be accessable to end-users. This could e.g. be a store locator page. Be careful only to include pages here that can handle large user spikes. 
+- There is a list of URL exceptions that should always be accessible to end-users. This could e.g. be a store locator page. Be careful to only include pages here that can handle large user spikes. 
 
 ```vcl
 sub queueit_recv {
@@ -102,5 +102,5 @@ sub queueit_recv {
 ```  
 
 ## Limitations
-The current implementation only support one active queue.
-Trigger & Action configuration in Go Queue-it Self-service platform is not supported
+The current implementation only supports one active queue.
+Trigger & Action configuration found in Go Queue-it Self-service platform is unsupported.

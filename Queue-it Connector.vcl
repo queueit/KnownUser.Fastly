@@ -115,7 +115,7 @@ sub validate_Queueit_cookie {
       return;
     }
     /* include eventId to hash calc */
-    set var.computed_hash = digest.hmac_sha256(table.lookup(queueit_config, "Secrete_key"),
+    set var.computed_hash = digest.hmac_sha256(table.lookup(queueit_config, "Secret_key"),
                                                var.queueid + var.extendable + var.expires);
     set var.computed_hash = regsub(var.computed_hash, "^0x", "");
     if (var.computed_hash != var.hash) {
@@ -129,7 +129,7 @@ sub validate_Queueit_cookie {
     if (var.extendable == "true") {
       set var.exptime = time.add(now, 20m);
       set var.expires = strftime({"%s"}, var.exptime);
-      set var.computed_hash = digest.hmac_sha256(table.lookup(queueit_config, "Secrete_key"),
+      set var.computed_hash = digest.hmac_sha256(table.lookup(queueit_config, "Secret_key"),
                                                  var.queueid + var.extendable + var.expires);
       set var.computed_hash = regsub(var.computed_hash, "^0x", "");
       # add EventId to cookie value
@@ -183,7 +183,7 @@ sub validate_queueit_token {
   else {
     return;
   }
-  set var.computed_hash = digest.hmac_sha256(table.lookup(queueit_config, "Secrete_key"), var.token_wo_hash);
+  set var.computed_hash = digest.hmac_sha256(table.lookup(queueit_config, "Secret_key"), var.token_wo_hash);
   set var.computed_hash = regsub(var.computed_hash, "^0x", "");
   # check the hash matches
   if (var.hash != var.computed_hash) {
@@ -212,7 +212,7 @@ sub validate_queueit_token {
   /* Succesful token parse, set cookie and allow through */
   set var.exptime = time.add(now, 20m);
   set var.expires = strftime({"%s"}, var.exptime);
-  set var.computed_hash = digest.hmac_sha256(table.lookup(queueit_config, "Secrete_key"),
+  set var.computed_hash = digest.hmac_sha256(table.lookup(queueit_config, "Secret_key"),
                                               var.queueid + var.extendable + var.expires);
   set var.computed_hash = regsub(var.computed_hash, "^0x", "");
   set var.decoded_cookie = "EventId=" + var.eventid

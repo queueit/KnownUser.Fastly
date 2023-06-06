@@ -30,6 +30,7 @@ Add a dictionary called `queueit_config` and the followning Keys:
 - *Queue_Baseurl* - The base URL of the queue, must end with trailing slash / e.g. https://[CUSTOMER_ID].queue-it.net/
 - *Secret_key* - The secret key that is shared between you and Queue-it
 - *Session_cookie_name* - Queue-it cookie name set value to "QueueITAccepted-SDFrts345E" (NOTE: Not shown in image below)
+- *Session_validity_time* - Queue-it cookie validity time set value to default time of "20m" (NOTE: Not shown in image below)
 - *Website_Host* - OPTIONAL. If the public facing host name is overwritten in Fastly use this to correct
 ![Image of Dictionary](https://github.com/queueit/KnownUser.Fastly/blob/master/Dictionary2.PNG)
 

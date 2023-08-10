@@ -198,7 +198,7 @@ sub validate_queueit_token {
     call queueit_err_redir;
   }
   set var.cookie_validitytime = table.lookup(queueit_config, "Session_validity_time");
-  # In Idle pahse cookie validity time is fixed at 3 minutes
+  # In Idle phase cookie validity time is fixed at 3 minutes
   if (std.tolower(var.rt) == "idle"){
     set var.cookie_validitytime = "3m";
   }
@@ -210,7 +210,8 @@ sub validate_queueit_token {
     call queueit_err_redir;
   }
   /* Succesful token parse, set cookie and allow through */
-  set var.exptime = time.add(now, var.cookie_validitytime);
+  #  Convert to time value
+  set var.exptime = time.add(now, std.integer2time(parse_time_delta(var.cookie_validitytime)));
   set var.expires = strftime({"%s"}, var.exptime);
   set var.computed_hash = digest.hmac_sha256(table.lookup(queueit_config, "Secret_key"),
                                               var.queueid + var.extendable + var.expires);

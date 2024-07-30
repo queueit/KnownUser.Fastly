@@ -210,8 +210,7 @@ sub validate_queueit_token {
     call queueit_err_redir;
   }
   /* Succesful token parse, set cookie and allow through */
-  set var.exptime = now;
-  set var.exptime += std.time(var.cookie_validitytime, 20m);
+  set var.exptime = time.add(now, std.time(var.cookie_validitytime, 20m));
   set var.expires = strftime({"%s"}, var.exptime);
   set var.computed_hash = digest.hmac_sha256(table.lookup(queueit_config, "Secret_key"),
                                               var.queueid + var.extendable + var.expires);
